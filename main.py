@@ -1,6 +1,7 @@
 import sys
 import json
 import yaml
+import xml.etree.ElementTree as ET
 
 def load_json(file_path):
     try:
@@ -24,6 +25,18 @@ def load_yaml(file_path):
         sys.exit(1)
     except yaml.YAMLError as e:
         print(f"Blad skladni YAML w pliku {file_path}: {e}")
+        sys.exit(1)
+
+def load_xml(file_path):
+    try:
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+        return root
+    except ET.ParseError as e:
+        print(f"Blad skladni XML w pliku {file_path}: {e}")
+        sys.exit(1)
+    except FileNotFoundError:
+        print(f"Plik {file_path} nie zostal znaleziony.")
         sys.exit(1)
 
 def save_json(data, file_path):
@@ -52,15 +65,18 @@ def main():
     input_file = sys.argv[1]
     output_file = sys.argv[2]
 
-    # Wczytanie i weryfikacja pliku .json lub .yml
+    # Wczytanie i weryfikacja pliku .json, .yaml lub .xml
     if input_file.endswith('.json'):
         data = load_json(input_file)
         print("Dane z pliku JSON zostaly poprawnie wczytane.")
     elif input_file.endswith(('.yml', '.yaml')):
         data = load_yaml(input_file)
         print("Dane z pliku YAML zostaly poprawnie wczytane.")
+    elif input_file.endswith('.xml'):
+        data = load_xml(input_file)
+        print("Dane z pliku XML zostaly poprawnie wczytane.")
     else:
-        print("Obssugiwane formaty to .json, .yml, .yaml")
+        print("Obslugiwane formaty to .json, .yml, .yaml, .xml")
         sys.exit(1)
 
     # Zapis danych do pliku .json lub .yaml w zależności od formatu pliku wyjściowego
