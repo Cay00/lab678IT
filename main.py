@@ -57,6 +57,21 @@ def save_yaml(data, file_path):
         print(f"Nie udalo sie zapisac danych do pliku {file_path}: {e}")
         sys.exit(1)
 
+def save_xml(data, file_path):
+    root = ET.Element("data")
+    for key, value in data.items():
+        child = ET.SubElement(root, key)
+        child.text = str(value)
+
+    tree = ET.ElementTree(root)
+    try:
+        with open(file_path, 'wb') as file:
+            tree.write(file, encoding='utf-8', xml_declaration=True)
+        print(f"Dane zostaly zapisane do pliku {file_path}")
+    except Exception as e:
+        print(f"Nie udalo sie zapisac danych do pliku {file_path}: {e}")
+        sys.exit(1)
+
 def main():
     if len(sys.argv) != 3:
         print("Uzycie: python main.py <input_file> <output_file>")
@@ -79,11 +94,13 @@ def main():
         print("Obslugiwane formaty to .json, .yml, .yaml, .xml")
         sys.exit(1)
 
-    # Zapis danych do pliku .json lub .yaml w zależności od formatu pliku wyjściowego
+    # Zapis danych do pliku .json, .yaml lub .xml w zależności od formatu pliku wyjściowego
     if output_file.endswith('.json'):
         save_json(data, output_file)
     elif output_file.endswith(('.yml', '.yaml')):
         save_yaml(data, output_file)
+    elif output_file.endswith('.xml'):
+        save_xml(data, output_file)
     else:
         print("Obslugiwany jest tylko format JSON lub YAML dla pliku wyjsciowego.")
         sys.exit(1)
