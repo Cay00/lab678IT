@@ -32,6 +32,15 @@ def save_json(data, file_path):
             json.dump(data, file, ensure_ascii=False, indent=4)
         print(f"Dane zostaly zapisane do pliku {file_path}")
     except Exception as e:
+        print(f"Nie udalo się zapisać danych do pliku {file_path}: {e}")
+        sys.exit(1)
+
+def save_yaml(data, file_path):
+    try:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            yaml.dump(data, file, default_flow_style=False, allow_unicode=True)
+        print(f"Dane zostaly zapisane do pliku {file_path}")
+    except Exception as e:
         print(f"Nie udalo sie zapisac danych do pliku {file_path}: {e}")
         sys.exit(1)
 
@@ -47,18 +56,20 @@ def main():
     if input_file.endswith('.json'):
         data = load_json(input_file)
         print("Dane z pliku JSON zostaly poprawnie wczytane.")
-    elif input_file.endswith('.yml') or input_file.endswith('.yaml'):
+    elif input_file.endswith(('.yml', '.yaml')):
         data = load_yaml(input_file)
         print("Dane z pliku YAML zostaly poprawnie wczytane.")
     else:
-        print("Obslugiwane formaty to .json, .yml, .yaml")
+        print("Obssugiwane formaty to .json, .yml, .yaml")
         sys.exit(1)
 
-    # Zapis danych do pliku .json
+    # Zapis danych do pliku .json lub .yaml w zależności od formatu pliku wyjściowego
     if output_file.endswith('.json'):
         save_json(data, output_file)
+    elif output_file.endswith(('.yml', '.yaml')):
+        save_yaml(data, output_file)
     else:
-        print("Obslugiwany jest tylko format JSON dla pliku wyjsciowego w tym przykladzie.")
+        print("Obslugiwany jest tylko format JSON lub YAML dla pliku wyjsciowego.")
         sys.exit(1)
 
     print("Plik wejsciowy:", input_file)
