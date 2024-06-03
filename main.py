@@ -7,15 +7,24 @@ def load_json(file_path):
             data = json.load(file)
         return data
     except FileNotFoundError:
-        print(f"Plik {file_path} nie został znaleziony.")
+        print(f"Plik {file_path} nie zostal znaleziony.")
         sys.exit(1)
     except json.JSONDecodeError as e:
-        print(f"Błąd składni JSON w pliku {file_path}: {e}")
+        print(f"Blad skladni JSON w pliku {file_path}: {e}")
+        sys.exit(1)
+
+def save_json(data, file_path):
+    try:
+        with open(file_path, 'w', encoding='utf-8') as file:
+            json.dump(data, file, ensure_ascii=False, indent=4)
+        print(f"Dane zostaly zapisane do pliku {file_path}")
+    except Exception as e:
+        print(f"Nie udalo sie zapisac danych do pliku {file_path}: {e}")
         sys.exit(1)
 
 def main():
     if len(sys.argv) != 3:
-        print("Użycie: python main.py <input_file> <output_file>")
+        print("Uzycie: python main.py <input_file> <output_file>")
         sys.exit(1)
 
     input_file = sys.argv[1]
@@ -25,6 +34,13 @@ def main():
     if input_file.endswith('.json'):
         data = load_json(input_file)
         print("Dane z pliku JSON zostaly poprawnie wczytane.")
+    else:
+        print("Obslugiwany jest tylko format JSON w tym przykladzie.")
+        sys.exit(1)
+
+    # Zapis danych do pliku .json
+    if output_file.endswith('.json'):
+        save_json(data, output_file)
     else:
         print("Obslugiwany jest tylko format JSON w tym przykladzie.")
         sys.exit(1)
